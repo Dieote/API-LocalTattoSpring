@@ -22,7 +22,6 @@ public class ArtistaServiceImpl implements ArtistaService {
         return lista;
     }
 
-    
     @Override
     @Transactional
     public String save(Artista tatuador) {
