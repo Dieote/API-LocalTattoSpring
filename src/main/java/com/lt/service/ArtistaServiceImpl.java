@@ -2,6 +2,7 @@ package com.lt.service;
 
 import com.lt.dao.ArtistaDAO;
 import com.lt.domain.Artista;
+import java.io.Console;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +26,15 @@ public class ArtistaServiceImpl implements ArtistaService {
     @Override
     @Transactional
     public String save(Artista tatuador) {
-        artistaDao.save(tatuador);
-        return tatuador.getName();
+        try {
+            if (tatuador.getName() == null) {
+                throw new IllegalAccessException("El nombre no puede ser nulo");
+            }
+            artistaDao.save(tatuador);
+            return tatuador.getName();
+        } catch (Exception e) {
+            return "Error al realizar post " + e.getMessage();
+        }
     }
 
     @Override
@@ -42,4 +50,17 @@ public class ArtistaServiceImpl implements ArtistaService {
         return artistaDao.findById(tatuador.getId()).orElse(null);
     }
 
+    @Override
+    @Transactional
+    public String update(Artista tatuador) {
+        try {
+            if (artistaDao.findById(tatuador.getId()) == null) {
+                throw new IllegalAccessError("No existe este artista");
+            }
+            artistaDao.save(tatuador);
+            return "Se realizo la modificacion";
+        } catch (Exception e) {
+            return "Error al modificar " + e.getMessage();
+        }
+    }
 }

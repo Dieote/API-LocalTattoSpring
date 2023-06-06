@@ -10,6 +10,7 @@ import com.lt.service.ArtistaService;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -23,23 +24,19 @@ public class ArtistaController {
     @GetMapping("/get-list-artists")
     @ResponseBody
     public List<Artista> getList() {
-        log.info("Ejecutado lista Artistas");
-
         return artistaService.getArtists();
+    }
+    
+    @GetMapping("/get-artist")
+    @ResponseBody
+    public String getArtistById(@PathVariable("id") Long id){
+        return "";
     }
 
     @PostMapping("/post-artist")
     @ResponseBody
     public String postArtist(@RequestBody Artista tatuador) {
-        try {
-            if (tatuador.getName() == null) {
-                throw new IllegalArgumentException("El nombre del tatuador no puede ser nulo");
-            }
-            artistaService.save(tatuador);
-            return "Se realizó el Post";
-        } catch (Exception e) {
-            return "Error al realizar el Post " + e.getMessage();
-        }
+        return artistaService.save(tatuador);
     }
     
     @DeleteMapping("/delete-artist/{id}")
@@ -49,4 +46,10 @@ public class ArtistaController {
         log.info("Eliminado artista con id " + id);
          return artistaService.delete(tatuador);
     }
+    
+    @PutMapping("/update-artist")
+    public String updateArtist (@RequestBody Artista tatuador){
+        return artistaService.update(tatuador);
+    }
+    
 }
