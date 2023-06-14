@@ -47,8 +47,8 @@ public class ArtistaController {
          return artistaService.delete(tatuador);
     }
     
-    @PutMapping("/update-artist")
-    public String updateArtist (@RequestBody Artista tatuador){
+    @PutMapping("/update-artist/{id}")
+        public String updateArtist (@RequestBody Artista tatuador){
         return artistaService.update(tatuador);
     }
     
