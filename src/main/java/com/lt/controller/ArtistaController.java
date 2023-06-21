@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -40,6 +41,7 @@ public class ArtistaController {
     }
     
     @DeleteMapping("/delete-artist/{id}")
+    @ResponseBody
     public String deleteArtist(@PathVariable("id") Long id ) {
         Artista tatuador = new Artista();
         tatuador.setId(id);
@@ -47,8 +49,9 @@ public class ArtistaController {
          return artistaService.delete(tatuador);
     }
     
-    @PutMapping("/update-artist/{id}")
-        public String updateArtist (@RequestBody Artista tatuador){
+    @PutMapping("/update-artist")
+    @ResponseBody
+        public String updateArtist ( @RequestBody Artista tatuador){
         return artistaService.update(tatuador);
     }
     
