@@ -27,7 +27,7 @@ public class CommentController {
     @ResponseBody
     public String postComment(@RequestBody Comment comment) {
         commentService.saveComment(comment);
-        return ("Funciona");
+        return ("FuncionaPost");
     }
     
     @DeleteMapping("/delete-comment/{id}")

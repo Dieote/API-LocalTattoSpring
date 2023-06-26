@@ -1,5 +1,6 @@
 package com.lt.controller;
 
+import com.lt.RespuestaHttp;
 import com.lt.domain.Artista;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -7,12 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import com.lt.service.ArtistaService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
 @Slf4j
 public class ArtistaController {
-
+ 
     @Autowired
     private ArtistaService artistaService;
 
@@ -20,33 +22,33 @@ public class ArtistaController {
     @ResponseBody
     public List<Artista> getList() {
         return artistaService.getArtists();
-    }
-    
+    } //el respuestaHttp debe tener un List
+
     @GetMapping("/get-artist")
     @ResponseBody
-    public String getArtistById(@PathVariable("id") Long id){
+    public String getArtistById(@PathVariable("id") Long id) {
         return "";
     }
 
     @PostMapping("/post-artist")
     @ResponseBody
-    public String postArtist(@RequestBody Artista tatuador) {
+    public ResponseEntity<RespuestaHttp> postArtist(@RequestBody Artista tatuador) {
         return artistaService.save(tatuador);
     }
-    
+
     @DeleteMapping("/delete-artist/{id}")
     @ResponseBody
-    public String deleteArtist(@PathVariable("id") Long id ) {
+    public ResponseEntity<RespuestaHttp> deleteArtist(@PathVariable("id") Long id) {
         Artista tatuador = new Artista();
         tatuador.setId(id);
         log.info("Eliminado artista con id " + id);
-         return artistaService.delete(tatuador);
+        return artistaService.delete(tatuador);
     }
-    
+
     @PutMapping("/update-artist")
     @ResponseBody
-        public String updateArtist ( @RequestBody Artista tatuador){
+    public ResponseEntity<RespuestaHttp> updateArtist(@RequestBody Artista tatuador) {
         return artistaService.update(tatuador);
     }
-    
+
 }
