@@ -2,7 +2,6 @@ package com.lt.service;
 
 import com.lt.dao.ArtistaDAO;
 import com.lt.domain.Artista;
-import java.io.Console;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
