@@ -22,4 +22,6 @@ public class Artista implements Serializable {
     @Column(name = "available")
     private String available;
 
+    
+//    hacer arraylist de dias 7
 }
