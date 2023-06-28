@@ -13,6 +13,18 @@ public class Cita implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
+    @Column(name = "nameCita")
+    private String nameCita;
+
+    @Column(name = "phoneCita")
+    private String phoneCita;
+
+    @Column(name = "idArtistaForm")
+    private Long idArtistaForm;
+
+    @Column(name = "availableCita")
+    private String availableCita;
+    
     @Column (name = "morning")
     private boolean morning;
     @Column(name = "evening")
