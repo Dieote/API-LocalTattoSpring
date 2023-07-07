@@ -10,7 +10,7 @@ public class ConfigCORs implements WebMvcConfigurer{
     @Override
     public void addCorsMappings(CorsRegistry registry){
         registry.addMapping("/**")
-                .allowedOriginPatterns("http://localhost:4200/","local-tatto-gm5epzr7q-dieote.vercel.app")
+                .allowedOriginPatterns("local-tatto-aqv3pnoc2-dieote.vercel.app")
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
                 .allowedHeaders("*")
                 .allowCredentials(true)
