@@ -7,7 +7,7 @@ public interface CommentService {
     
     public List<Comment> getComment();
     
-    public String saveComment(Comment comment);
+    public String saveComment(Comment comment, String username);
     
     public String delete(Comment comment);
 }

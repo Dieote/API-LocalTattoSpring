@@ -24,11 +24,12 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public String saveComment(Comment comment) {
+    public String saveComment(Comment comment, String username) {
         try {
             if (comment.getComment() == null){
                 throw new IllegalAccessException("El comentario no puede ser vacio");
             }
+            comment.setUsername(username);
             commentDao.save(comment);
             return comment.getComment();
         } catch (Exception e) {

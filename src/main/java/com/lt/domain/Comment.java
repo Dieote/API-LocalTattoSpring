@@ -15,11 +15,14 @@ public class Comment implements Serializable{
     private Long id;
     @Column(name = "comments")
     private String comment;
-    
+    @Column(name = "username")
+    private String username;
+
     public Comment() {}
 
-    public Comment(String comment) {
+    public Comment(String comment, String username) {
     this.comment = comment;
+    this.username = username;
 }
 
 }

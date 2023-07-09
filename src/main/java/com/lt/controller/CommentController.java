@@ -2,7 +2,11 @@ package com.lt.controller;
 
 import com.lt.domain.Comment;
 import com.lt.service.CommentService;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,17 +29,26 @@ public class CommentController {
     
     @PostMapping("/post-comments")
     @ResponseBody
-    public String postComment(@RequestBody Comment comment) {
-        commentService.saveComment(comment);
-        return ("Funciona");
+    public ResponseEntity<String> postComment(@RequestBody Comment comment) {
+        String username = comment.getUsername();
+        commentService.saveComment(comment, username);
+        return ResponseEntity.ok().body("{\"message\": \"Funciona\"}");
     }
     
     @DeleteMapping("/delete-comment/{id}")
     @ResponseBody
-    public String deleteComment(@PathVariable("id") Long id ) {
+    public ResponseEntity<Map<String, String>> deleteComment(@PathVariable("id") Long id ) {
         Comment userComment = new Comment();
         userComment.setId(id);
         log.info("Eliminado comentario con id " + id);
-         return commentService.delete(userComment);
+
+        String deleteMessage = commentService.delete(userComment);
+        if(deleteMessage.equals("Comentario eliminado")){
+            Map<String, String> response = new HashMap<>();
+            response.put("message", deleteMessage);
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 }
