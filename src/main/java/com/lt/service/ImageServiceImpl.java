@@ -1,5 +1,6 @@
 package com.lt.service;
 
+import com.lt.ImageResponse;
 import com.lt.RespuestaHttp;
 import com.lt.dao.ImageDAO;
 import com.lt.domain.Image;
@@ -18,35 +19,25 @@ public class ImageServiceImpl implements ImageService{
     private ImageDAO imageDao;
 
     @Override
-    @Transactional(readOnly = true)
-    public List<Image> getImages() {
-        List<Image> lista = new ArrayList<>();
-        imageDao.findAll().forEach(lista::add);
-        return lista;
+    public Image save(Image image) throws NullPointerException {
+        if (image == null)
+            throw new NullPointerException("Image Data NULL");
+        return imageDao.save(image);
     }
 
     @Override
-    @Transactional
-    public ResponseEntity<RespuestaHttp> saveImage(Image imagen) {
-        RespuestaHttp respuesta = new RespuestaHttp();
-        imageDao.save(imagen);
-        respuesta.setMessage("Imagen cargada con exito.");
-        respuesta.setStatus("Ok");
-        return ResponseEntity.ok(respuesta);
+    public Image findByFileName(String fileName) {
+        return this.imageDao.findByFileName(fileName);
     }
 
     @Override
-    @Transactional
-    public ResponseEntity<RespuestaHttp> deleteImage(Image imagen) {
-        RespuestaHttp respuesta = new RespuestaHttp();
-        imageDao.delete(imagen);
-        respuesta.setMessage("Imagen eliminada con exito.");
-        respuesta.setStatus("Ok");
-        return ResponseEntity.ok(respuesta);
+    public Image findByUuid(String uuid) {
+        return this.imageDao.findByUuid(uuid);
     }
 
     @Override
-    public Image getImageById(Image imagen) {
-        return imageDao.findById(imagen.getId()).orElse(null);
+    public List<ImageResponse> findAllImageResponse() {
+        return this.imageDao.findAllImageResponse();
     }
+
 }
