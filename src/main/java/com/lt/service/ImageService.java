@@ -16,5 +16,6 @@ public interface ImageService {
 
     public List<ImageResponse> findAllImageResponse();
 
+    public String deleteByUuid(String uuid);
 
 }

@@ -25,6 +25,11 @@ import java.util.UUID;
 @AllArgsConstructor
 @Table(name = "imagenes")
 public class Image extends BaseEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", unique = true)
+    private Long id;
+
     @Column(name = "file_name")
     private String fileName;
 
@@ -101,7 +106,7 @@ public class Image extends BaseEntity {
         InputStream is = getResourceFileAsInputStream("notfound.jpg");
         String fileType = "image/jpeg";
         byte[] bdata = FileCopyUtils.copyToByteArray(is);
-        Image image = new Image(null, fileType, 0, null, null, bdata);
+        Image image = new Image(null,null, fileType, 0, null, null, bdata);
         return image;
     }
 

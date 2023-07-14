@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ImageDAO extends CrudRepository<Image,Integer>{
+public interface ImageDAO extends CrudRepository<Image,Long>{
 
 
     Image findByFileName(String fileName);

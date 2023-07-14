@@ -2,8 +2,10 @@ package com.lt.helpers;
 
 import com.lt.FileNameException;
 import org.joda.time.DateTime;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+@Component
 public class FileNameHelper {
 
 	public String generateUniqueNumber() {

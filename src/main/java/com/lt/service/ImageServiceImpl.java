@@ -40,4 +40,17 @@ public class ImageServiceImpl implements ImageService{
         return this.imageDao.findAllImageResponse();
     }
 
+    @Override
+    @Transactional
+    public String deleteByUuid(String uuid) {
+        Image image = imageDao.findByUuid(uuid);
+        System.out.println("Uuid: " + uuid);
+        if (image != null) {
+            imageDao.findByUuid(uuid);
+            imageDao.delete(image);
+            return "Imagen eliminada.";
+        } else {
+            return "La imagen no existe.";
+        }
+    }
 }

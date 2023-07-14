@@ -4,16 +4,21 @@ import com.lt.ImageResponse;
 import com.lt.domain.Image;
 import com.lt.helpers.FileNameHelper;
 import com.lt.service.ImageService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
+@Slf4j
 @RequestMapping("/media")
 public class ImageController {
 
@@ -40,9 +45,9 @@ public class ImageController {
         return Arrays.asList(files).stream().map(file -> uploadSingleFile(file)).collect(Collectors.toList());
     }
 
-    @GetMapping("/show/{fileName}")
-    public ResponseEntity<byte[]> getImage(@PathVariable String fileName) throws Exception {
-        Image image = getImageByName(fileName);
+    @GetMapping("/show/{uuid}")
+    public ResponseEntity<byte[]> getImage(@PathVariable String uuid) throws Exception {
+        Image image = getImageByName(uuid);
         return ResponseEntity.ok().contentType(MediaType.valueOf(image.getFileType())).body(image.getData());
     }
 
@@ -119,6 +124,23 @@ public class ImageController {
         image.scale(width, height);
         return image;
     }
+
+    @DeleteMapping("/delete-image/{uuid}")
+    @ResponseBody
+    public ResponseEntity<Map<String, String>> deleteByFileName(@PathVariable("uuid") String uuid) {
+        log.info("Imagen eliminada: " + uuid);
+        String deleteMessage = imageService.deleteByUuid(uuid);
+        if (deleteMessage.equals("Imagen eliminada.")) {
+            Map<String, String> response = new HashMap<>();
+            response.put("message", deleteMessage);
+            return ResponseEntity.ok(response);
+        } else {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", deleteMessage);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
 
 
 }
