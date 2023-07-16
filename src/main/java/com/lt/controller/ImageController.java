@@ -127,7 +127,7 @@ public class ImageController {
 
     @DeleteMapping("/delete-image/{uuid}")
     @ResponseBody
-    public ResponseEntity<Map<String, String>> deleteByFileName(@PathVariable("uuid") String uuid) {
+    public ResponseEntity<Map<String, String>> deleteByUuid(@PathVariable("uuid") String uuid) {
         log.info("Imagen eliminada: " + uuid);
         String deleteMessage = imageService.deleteByUuid(uuid);
         if (deleteMessage.equals("Imagen eliminada.")) {
