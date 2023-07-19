@@ -17,6 +17,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -49,6 +51,12 @@ public class Image extends BaseEntity {
     @Column(name = "data")
     @Type(type = "org.hibernate.type.BinaryType")
     private byte[] data;
+
+    @OneToMany( cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "image", orphanRemoval = true)
+    private Set<ImageArtist> artistImage = new HashSet<>();
+
+    public Image(Object o, Object o1, String fileType, int i, Object o2, Object o3, byte[] bdata) {
+    }
 
     @Transient
     public static Image build() {
@@ -132,4 +140,5 @@ public class Image extends BaseEntity {
         }
         return image;
     }
+
 }

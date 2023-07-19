@@ -1,16 +1,15 @@
 package com.lt.service;
 
 import com.lt.ImageResponse;
-import com.lt.RespuestaHttp;
 import com.lt.dao.ImageDAO;
 import com.lt.domain.Image;
+import com.lt.domain.ImageArtist;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class ImageServiceImpl implements ImageService{
@@ -46,7 +45,9 @@ public class ImageServiceImpl implements ImageService{
         Image image = imageDao.findByUuid(uuid);
         System.out.println("Uuid: " + uuid);
         if (image != null) {
-            imageDao.findByUuid(uuid);
+            for(ImageArtist imageArtist : image.getArtistImage()){
+                imageArtist.setImage(null);
+            }
             imageDao.delete(image);
             return "Imagen eliminada.";
         } else {
