@@ -1,7 +1,11 @@
 package com.lt.controller;
 
 import com.lt.ImageResponse;
+import com.lt.dao.ArtistaDAO;
+import com.lt.dao.ImageArtistDAO;
+import com.lt.domain.Artista;
 import com.lt.domain.Image;
+import com.lt.domain.ImageArtist;
 import com.lt.helpers.FileNameHelper;
 import com.lt.service.ImageService;
 import lombok.extern.slf4j.Slf4j;
@@ -11,10 +15,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -24,6 +26,10 @@ public class ImageController {
 
     @Autowired
     private ImageService imageService;
+    @Autowired
+    private ImageArtistDAO imageArtistDAO;
+    @Autowired
+    private ArtistaDAO artistaDAO;
 
     private FileNameHelper fileHelper = new FileNameHelper();
 
@@ -31,13 +37,37 @@ public class ImageController {
     public ResponseEntity<List<ImageResponse>> getAllImageInfo() throws Exception {
         List<ImageResponse> imageResponses = imageService.findAllImageResponse();
 
-        //llamar imageartistdao final
-        //imageresponse.filter(imageresponse)
-
-        return ResponseEntity.ok().body(imageResponses);
+        List<String> relationArtImg = imageArtistDAO.findAll()
+                .stream()
+                .filter(imageArtist -> imageArtist.getImage() != null)
+                .map(imageArtist -> imageArtist.getImage().getUuid())//obtiene id de imagenes realcionadas
+                .collect(Collectors.toList());
+        List<ImageResponse> filterImgArt = imageResponses.stream()
+                .filter(imageResponse -> !relationArtImg.contains(imageResponse.getUuid()))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok().body(filterImgArt);
     }
 
     //crear metodo nuevo que traiga solo la imagene relacionada conn el artista (id)
+    @GetMapping("/imagesByArtist/{artistId}")
+    public ResponseEntity<List<ImageResponse>> getImagesByArtist(@PathVariable Long artistId) throws Exception {
+        List<ImageResponse> imageResponses = imageService.findAllImageResponse();
+
+        Optional<Artista> artist = artistaDAO.findById(artistId);
+        if (!artist.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+        List<ImageArtist> imageArtists = imageArtistDAO.findAllByArtista(artist.get());
+
+        List<String> imagesByArtist = imageArtists
+                .stream().map(imageArtist -> imageArtist.getImage().getUuid())
+                .collect(Collectors.toList());
+        List<ImageResponse> filterImgArt = imageResponses.stream()
+                .filter(imageResponse -> imagesByArtist.contains(imageResponse.getUuid()))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok().body(filterImgArt);
+    }
+
 
     @PostMapping("/upload")
     public ImageResponse uploadSingleFile(@RequestParam("file") MultipartFile file) {
