@@ -30,8 +30,14 @@ public class ImageController {
     @GetMapping("/images")
     public ResponseEntity<List<ImageResponse>> getAllImageInfo() throws Exception {
         List<ImageResponse> imageResponses = imageService.findAllImageResponse();
+
+        //llamar imageartistdao final
+        //imageresponse.filter(imageresponse)
+
         return ResponseEntity.ok().body(imageResponses);
     }
+
+    //crear metodo nuevo que traiga solo la imagene relacionada conn el artista (id)
 
     @PostMapping("/upload")
     public ImageResponse uploadSingleFile(@RequestParam("file") MultipartFile file) {
@@ -41,7 +47,7 @@ public class ImageController {
     }
 
     @PostMapping("/uploads")
-    public List<ImageResponse> uploadMultiFiles(@RequestParam("files") MultipartFile[] files) {
+    public List<ImageResponse> uploadMultiFiles(@RequestParam("file") MultipartFile[] files) {
         return Arrays.asList(files).stream().map(file -> uploadSingleFile(file)).collect(Collectors.toList());
     }
 
