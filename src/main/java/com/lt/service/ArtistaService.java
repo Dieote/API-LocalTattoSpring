@@ -20,4 +20,5 @@ public interface ArtistaService {
 
     public ResponseEntity<RespuestaHttp> uploadImage( Long idArtista, MultipartFile file) throws Exception;
 
+
 }

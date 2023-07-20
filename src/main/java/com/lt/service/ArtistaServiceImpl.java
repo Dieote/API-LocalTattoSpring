@@ -27,12 +27,25 @@ public class ArtistaServiceImpl implements ArtistaService {
 
     @Autowired
     private FileNameHelper fileNameHelper;
+    @Autowired
+    private ImageService imageService;
 
     @Override
     @Transactional(readOnly = true)
     public List<Artista> getArtists() {
         List<Artista> lista = new ArrayList<>();
-        artistaDao.findAll().forEach(lista::add);
+        //artistaDao.findAll().forEach(lista::add);
+
+        artistaDao.findAll().forEach(artista -> {
+            ResponseEntity<List<String>> response = imageService.getArtistFileName(artista);
+            if(response.getStatusCode() == HttpStatus.OK){
+                List<String> imgNames = response.getBody();
+                if (imgNames != null && !imgNames.isEmpty()){
+                    artista.setImageName(imgNames.get(0));
+                }
+            }
+            lista.add(artista);
+        });
         return lista;
     }
     @Override
@@ -61,23 +74,6 @@ public class ArtistaServiceImpl implements ArtistaService {
         }
     }
 
-    /*@Override
-    @Transactional
-    public ResponseEntity<RespuestaHttp> save(Artista tatuador){
-        RespuestaHttp respuesta = new RespuestaHttp();
-        try {
-            if (tatuador.getName() == null) {
-                throw new IllegalAccessException("El nombre no puede ser nulo");
-            }
-            artistaDao.save(tatuador);
-            respuesta.setMessage(tatuador.getName());
-            respuesta.setStatus("OK");
-            return ResponseEntity.ok(respuesta);
-        } catch (Exception e) {
-            return ResponseEntity.ok(respuesta);
-        }
-    }
-*/
     @Override
     @Transactional
     public ResponseEntity<RespuestaHttp> uploadImage(Long idArtista, MultipartFile file) throws Exception {
@@ -108,58 +104,6 @@ public class ArtistaServiceImpl implements ArtistaService {
             throw new Exception("Error al agregar imágenes del artista: " + e.getMessage());
         }
     }
-
-  /*  @Override
-    @Transactional
-    public ResponseEntity<RespuestaHttp> uploadImage(Long idArtista, MultipartFile file) throws Exception {
-        RespuestaHttp respuesta = new RespuestaHttp();
-        try {
-            Optional<Artista> artistaOptional = artistaDao.findById(idArtista);
-        ImageArtist imageArtist = new ImageArtist();
-        imageArtist.setArtista(artistaOptional.get());
-        imageArtist.setImage(Image.buildImage(file, fileNameHelper));
-
-            if (artistaOptional.isPresent()) {
-                Artista artista = artistaOptional.get();
-                Set<ImageArtist> setImageArtist = new HashSet<>();
-                setImageArtist.add(imageArtist);
-                for (ImageArtist setImageArtistFor : setImageArtist) {
-                    imageDao.save(setImageArtistFor.getImage());
-                    artistaDao.save(setImageArtistFor.getArtista());
-                }
-
-                respuesta.setMessage("Imágenes del artista agregadas correctamente");
-                respuesta.setStatus("OK");
-                return ResponseEntity.ok(respuesta);
-            } else {
-                throw new IllegalArgumentException("Artista no encontrado con ID: " + idArtista);
-            }
-        } catch (Exception e) {
-            throw new Exception("Error al agregar imágenes del artista: " + e.getMessage());
-        }
-    }
-*/
-    /*@Override
-    @Transactional
-    public ResponseEntity<RespuestaHttp> uploadImage( Long idArtista, MultipartFile file) {
-        RespuestaHttp respuesta = new RespuestaHttp();
-        try {
-            Optional<Artista> AAA = artistaDao.findById(idArtista);
-            Image image = Image.buildImage(file, fileNameHelper);
-           AAA.get();
-            Artista.pushImage(image);
-            Artista artistimag = AAA.get();
-            artistimag.pushImage(image);
-
-            artistaDao.save(artistimag);
-            respuesta.setMessage(AAA.get().getName());
-            respuesta.setStatus("OK");
-            return ResponseEntity.ok(respuesta);
-        } catch (Exception e) {
-            return ResponseEntity.ok(respuesta);
-        }
-    }
-    */
 
     @Override
     @Transactional

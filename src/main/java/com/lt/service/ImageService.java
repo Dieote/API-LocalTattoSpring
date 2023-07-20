@@ -1,11 +1,11 @@
 package com.lt.service;
 
 import com.lt.ImageResponse;
+import com.lt.domain.Artista;
 import com.lt.domain.Image;
-import com.lt.domain.ImageArtist;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
-import java.util.Set;
 
 public interface ImageService {
 
@@ -21,4 +21,5 @@ public interface ImageService {
 
     public String deleteByUuid(String uuid);
 
+    public ResponseEntity<List<String>> getArtistFileName(Artista artista);
 }
