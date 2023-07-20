@@ -29,9 +29,9 @@ public class Artista implements Serializable {
     @Column(name = "available")
     private String available;
 
+    private String imageName;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER,mappedBy = "artista")
     @JsonIgnore
     private Set<ImageArtist> artistImage = new HashSet<>();
 
-//    hacer arraylist de dias 7
 }

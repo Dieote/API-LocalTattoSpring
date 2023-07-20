@@ -27,7 +27,7 @@ public class ArtistaController {
     @ResponseBody
     public List<Artista> getList() {
         return artistaService.getArtists();
-    } //el respuestaHttp debe tener un List
+    }
 
     @GetMapping("/get-artist/{id}")
     @ResponseBody
@@ -46,18 +46,8 @@ public class ArtistaController {
         Artista tatuador = new Artista();
         tatuador.setId(artistaId);
         Artista artistaa = artistaService.getArtistById(tatuador);
-
-            //atuador.getArtistImage().add(imageArtist);
-
             return artistaService.uploadImage(artistaId, file);
     }
-
-     /*@PostMapping("/post-image/{id}")
-     @ResponseBody
-     public ResponseEntity<RespuestaHttp> postImage(@PathVariable("id") Long id, @RequestParam("files")MultipartFile image) {
-         return artistaService.uploadImage(id, image);
-     }
-     */
     @DeleteMapping("/delete-artist/{id}")
     @ResponseBody
     public ResponseEntity<RespuestaHttp> deleteArtist(@PathVariable("id") Long id) {
