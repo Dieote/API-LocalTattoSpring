@@ -48,27 +48,6 @@ public class ImageController {
         return ResponseEntity.ok().body(filterImgArt);
     }
 
-    //crear metodo nuevo que traiga solo la imagene relacionada conn el artista (id)
-    @GetMapping("/imagesByArtist/{artistId}")
-    public ResponseEntity<List<ImageResponse>> getImagesByArtist(@PathVariable Long artistId) throws Exception {
-        List<ImageResponse> imageResponses = imageService.findAllImageResponse();
-
-        Optional<Artista> artist = artistaDAO.findById(artistId);
-        if (!artist.isPresent()) {
-            return ResponseEntity.notFound().build();
-        }
-        List<ImageArtist> imageArtists = imageArtistDAO.findAllByArtista(artist.get());
-
-        List<String> imagesByArtist = imageArtists
-                .stream().map(imageArtist -> imageArtist.getImage().getUuid())
-                .collect(Collectors.toList());
-        List<ImageResponse> filterImgArt = imageResponses.stream()
-                .filter(imageResponse -> imagesByArtist.contains(imageResponse.getUuid()))
-                .collect(Collectors.toList());
-        return ResponseEntity.ok().body(filterImgArt);
-    }
-
-
     @PostMapping("/upload")
     public ImageResponse uploadSingleFile(@RequestParam("file") MultipartFile file) {
         Image image = Image.buildImage(file, fileHelper);
@@ -176,9 +155,4 @@ public class ImageController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
-
-
-
 }
-
-

@@ -34,7 +34,6 @@ public class ArtistaServiceImpl implements ArtistaService {
     @Transactional(readOnly = true)
     public List<Artista> getArtists() {
         List<Artista> lista = new ArrayList<>();
-        //artistaDao.findAll().forEach(lista::add);
 
         artistaDao.findAll().forEach(artista -> {
             ResponseEntity<List<String>> response = imageService.getArtistFileName(artista);
@@ -66,6 +65,7 @@ public class ArtistaServiceImpl implements ArtistaService {
 
             respuesta.setMessage(savedArtista.getName());
             respuesta.setStatus("OK");
+            respuesta.setId(savedArtista.getId());
             return ResponseEntity.ok(respuesta);
         } catch (Exception e) {
             respuesta.setMessage("Error al guardar el artista: " + e.getMessage());

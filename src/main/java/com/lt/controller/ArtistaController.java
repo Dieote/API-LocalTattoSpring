@@ -5,9 +5,6 @@ import com.lt.domain.Artista;
 
 import java.util.List;
 
-import com.lt.domain.Image;
-import com.lt.domain.ImageArtist;
-import com.lt.helpers.FileNameHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
