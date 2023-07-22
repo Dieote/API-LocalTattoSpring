@@ -6,4 +6,5 @@ import lombok.Data;
 public class RespuestaHttp {
     private String status;
     private String message;
+    private Long id;
 }
