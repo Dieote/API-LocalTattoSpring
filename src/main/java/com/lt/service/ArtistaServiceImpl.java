@@ -61,6 +61,10 @@ public class ArtistaServiceImpl implements ArtistaService {
             if (tatuador.getName() == null) {
               throw new IllegalArgumentException("El nombre del artista no puede ser nulo");
             }
+
+            if(tatuador.getArtistImage() == null || tatuador.getArtistImage().isEmpty()){
+                throw new IllegalArgumentException("La imagen del artista es obligatoria.");
+            }
             Artista savedArtista = artistaDao.save(tatuador);
 
             respuesta.setMessage(savedArtista.getName());
