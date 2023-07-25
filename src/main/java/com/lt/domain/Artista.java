@@ -1,15 +1,12 @@
 package com.lt.domain;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data; //genera nuestro codigo set-get-hash-toString
-import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @Entity

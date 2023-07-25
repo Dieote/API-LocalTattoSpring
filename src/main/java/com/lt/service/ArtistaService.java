@@ -12,7 +12,7 @@ public interface ArtistaService {
 
     public ResponseEntity<RespuestaHttp> save(Artista tatuador) throws Exception  ;
 
-    public ResponseEntity<RespuestaHttp> delete(Artista tatuador);
+    public ResponseEntity<RespuestaHttp> delete(Long idArtista);
 
     public Artista getArtistById(Artista tatuador);
     

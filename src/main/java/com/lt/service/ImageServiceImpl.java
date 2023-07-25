@@ -58,6 +58,7 @@ public class ImageServiceImpl implements ImageService{
             for(ImageArtist imageArtist : image.getArtistImage()){
                 imageArtist.setImage(null);
             }
+            image.getArtistImage().clear();
             imageDao.delete(image);
             return "Imagen eliminada.";
         } else {

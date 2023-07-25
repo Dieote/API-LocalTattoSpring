@@ -42,16 +42,14 @@ public class ArtistaController {
     public ResponseEntity<RespuestaHttp> postImageArtist(@PathVariable("artistaId") Long artistaId, @RequestParam("file") MultipartFile file) throws Exception{
         Artista tatuador = new Artista();
         tatuador.setId(artistaId);
-        Artista artistaa = artistaService.getArtistById(tatuador);
-            return artistaService.uploadImage(artistaId, file);
+        artistaService.getArtistById(tatuador);
+        return artistaService.uploadImage(artistaId, file);
     }
     @DeleteMapping("/delete-artist/{id}")
     @ResponseBody
     public ResponseEntity<RespuestaHttp> deleteArtist(@PathVariable("id") Long id) {
-        Artista tatuador = new Artista();
-        tatuador.setId(id);
         log.info("Eliminado artista con id " + id);
-        return artistaService.delete(tatuador);
+        return artistaService.delete(id);
     }
 
     @PutMapping("/update-artist")
