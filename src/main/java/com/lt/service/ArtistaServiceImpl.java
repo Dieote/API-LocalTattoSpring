@@ -62,9 +62,9 @@ public class ArtistaServiceImpl implements ArtistaService {
               throw new IllegalArgumentException("El nombre del artista no puede ser nulo");
             }
 
-            if(tatuador.getArtistImage() == null || tatuador.getArtistImage().isEmpty()){
-                throw new IllegalArgumentException("La imagen del artista es obligatoria.");
-            }
+            // if(tatuador.getArtistImage() == null || tatuador.getArtistImage().isEmpty()){
+             //   throw new IllegalArgumentException("La imagen del artista es obligatoria.");
+            //}
             Artista savedArtista = artistaDao.save(tatuador);
 
             respuesta.setMessage(savedArtista.getName());
@@ -111,14 +111,33 @@ public class ArtistaServiceImpl implements ArtistaService {
 
     @Override
     @Transactional
-    public ResponseEntity<RespuestaHttp> delete(Artista tatuador) {
+    public ResponseEntity<RespuestaHttp> delete(Long idArtista) {
         RespuestaHttp respuesta = new RespuestaHttp();
-        artistaDao.delete(tatuador);
-        respuesta.setMessage("Eliminado");
-        respuesta.setStatus("Ok");
-        return ResponseEntity.ok(respuesta);
-    }
+        //Eliminamos relacion image_artist
+        Artista tatuador = artistaDao.findById(idArtista).orElse(null);
+        if(tatuador == null){
+            respuesta.setMessage("El artista id " + idArtista + " no existe.");
+            respuesta.setStatus("Error");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta);
+        }
+    Set<ImageArtist> artistImages = tatuador.getArtistImage();
 
+    Set<Image> imagesDel = new HashSet<>();
+    for(ImageArtist imageArtist : artistImages){
+        Image image = imageArtist.getImage();
+        if (image != null){
+            imagesDel.add(image);
+            image.getArtistImage().clear();
+        }
+        for (Image imagen : imagesDel){
+            imageDao.delete(imagen);
+        }
+    }
+            artistaDao.delete(tatuador);
+            respuesta.setMessage("Eliminado");
+            respuesta.setStatus("Ok");
+            return ResponseEntity.ok(respuesta);
+        }
     @Override
     @Transactional
     public ResponseEntity<RespuestaHttp> update(Artista artista) {
@@ -129,11 +148,17 @@ public class ArtistaServiceImpl implements ArtistaService {
             if (!artistOptional.isPresent()) {
                 throw new IllegalAccessError("No existe este artista");
             }
+            Artista existArtist = artistOptional.get();//obtener artista
+            if(artista.getImageName() == null || artista.getImageName().isEmpty()){ //verifica imagen
+                artista.setImageName(existArtist.getImageName());
+            }
             artistaDao.save(artista);
             respuesta.setMessage("Artista Actualizado");
             respuesta.setStatus("Ok");
             return ResponseEntity.ok(respuesta);
         } catch (Exception e) {
+            respuesta.setMessage("Error al actualizar.");
+            respuesta.setStatus("Error");
             return ResponseEntity.ok(respuesta);
         }
     }
