@@ -1,11 +1,14 @@
 package com.lt.service;
 
+import com.lt.ImageResponse;
 import com.lt.RespuestaHttp;
 import com.lt.dao.ArtistaDAO;
+import com.lt.dao.ImageArtistDAO;
 import com.lt.dao.ImageDAO;
 import com.lt.domain.Artista;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.lt.domain.Image;
 import com.lt.domain.ImageArtist;
@@ -24,24 +27,29 @@ public class ArtistaServiceImpl implements ArtistaService {
     private ArtistaDAO artistaDao;
     @Autowired
     private ImageDAO imageDao;
-
+    @Autowired
+    private ImageArtistDAO imageArtistDao;
     @Autowired
     private FileNameHelper fileNameHelper;
     @Autowired
     private ImageService imageService;
 
+
     @Override
     @Transactional(readOnly = true)
-    public List<Artista> getArtists() {
+    public List<Artista> getArtists()  {
         List<Artista> lista = new ArrayList<>();
 
         artistaDao.findAll().forEach(artista -> {
-            ResponseEntity<List<String>> response = imageService.getArtistFileName(artista);
-            if(response.getStatusCode() == HttpStatus.OK){
-                List<String> imgNames = response.getBody();
-                if (imgNames != null && !imgNames.isEmpty()){
-                    artista.setImageName(imgNames.get(0));
+          List<String> listNamesImg = imageService.getArtistFileName(artista);
+
+                if (listNamesImg != null && !listNamesImg.isEmpty()){
+                    artista.setImageName(listNamesImg.get(0));
                 }
+            List<String> listUuidsImg = imageService.getArtistFileUuid(artista);
+
+            if (listUuidsImg != null && !listUuidsImg.isEmpty()){
+                artista.setImageUuid(listUuidsImg.get(0));
             }
             lista.add(artista);
         });
@@ -62,9 +70,6 @@ public class ArtistaServiceImpl implements ArtistaService {
               throw new IllegalArgumentException("El nombre del artista no puede ser nulo");
             }
 
-            // if(tatuador.getArtistImage() == null || tatuador.getArtistImage().isEmpty()){
-             //   throw new IllegalArgumentException("La imagen del artista es obligatoria.");
-            //}
             Artista savedArtista = artistaDao.save(tatuador);
 
             respuesta.setMessage(savedArtista.getName());
@@ -92,7 +97,6 @@ public class ArtistaServiceImpl implements ArtistaService {
 
                 ImageArtist imageArtist = new ImageArtist();
                 imageArtist.setArtista(artista);
-
                 imageArtist.setImage(savedImage);//Asigan la instancia Image a ImageArtist
 
                 artista.getArtistImage().add(imageArtist); // Relaciona la imagen con el artista en la tabla imageArtist
@@ -140,26 +144,93 @@ public class ArtistaServiceImpl implements ArtistaService {
         }
     @Override
     @Transactional
-    public ResponseEntity<RespuestaHttp> update(Artista artista) {
+    public ResponseEntity<RespuestaHttp> update(Artista tatuador) throws Exception {
         RespuestaHttp respuesta = new RespuestaHttp();
-
         try {
-            Optional<Artista> artistOptional = artistaDao.findById(artista.getId());
+            Optional<Artista> artistOptional = artistaDao.findById(tatuador.getId());
             if (!artistOptional.isPresent()) {
                 throw new IllegalAccessError("No existe este artista");
             }
-            Artista existArtist = artistOptional.get();//obtener artista
-            if(artista.getImageName() == null || artista.getImageName().isEmpty()){ //verifica imagen
-                artista.setImageName(existArtist.getImageName());
-            }
-            artistaDao.save(artista);
-            respuesta.setMessage("Artista Actualizado");
-            respuesta.setStatus("Ok");
-            return ResponseEntity.ok(respuesta);
+            artistaDao.save(tatuador);
+            respuesta.setMessage("Artista Actualizado correctamente.");
+            respuesta.setStatus("OK");
         } catch (Exception e) {
-            respuesta.setMessage("Error al actualizar.");
-            respuesta.setStatus("Error");
-            return ResponseEntity.ok(respuesta);
+            respuesta.setMessage("Error al actualizar artista.");
+            respuesta.setStatus("ERROR");
+             throw new Exception("Error al agregar imágenes del artista: " + e.getMessage());
         }
+        return ResponseEntity.ok().body(respuesta);
     }
+
+/*
+    @Override
+    @Transactional
+    public ResponseEntity<RespuestaHttp> updateImageArtist(Long idArtista, String fileName, MultipartFile file) throws Exception {
+        RespuestaHttp respuesta = new RespuestaHttp();
+            try {
+                Optional<Artista> artistaOptional = artistaDao.findById(idArtista);
+                if (artistaOptional.isPresent()) {
+                Artista tatuador = artistaOptional.get();
+
+                 //imageArtistDao.findall();
+                //filtrar el listado buscando el id del artista
+                Image imageBD = imageService.findByFileName(artista.getImageName());
+                Image image = Image.buildImage(file, fileNameHelper);
+                image.setId(imageBD.getId());
+                Image savedImage = imageDao.save(image);// Guarda la instancia de Image en la BD antes de relacionarla conartista
+
+                //ImageArtist imageArtist = new ImageArtist();
+                //imageArtist.setArtista(tatuador);
+                //imageArtist.setImage(savedImage);//Asigan la instancia Image a ImageArtist
+
+                // tatuador.getArtistImage().add(imageArtist); // Relaciona la imagen con el artista en la tabla imageArtist
+                //artistaDao.save(tatuador); // Guarda la relacin en la base de datos
+
+                respuesta.setMessage("Imagen del artista actualizada correctamente.");
+                respuesta.setStatus("OK");
+                } else {
+                throw new IllegalArgumentException("Artista no encontrado con ID: " + idArtista);
+                }
+                } catch (Exception e) {
+                respuesta.setMessage("Error al agregar imágenes del artista: " + e.getMessage());
+                respuesta.setStatus("ERROR");
+                throw new Exception("Error al agregar imágenes del artista: " + e.getMessage());
+                }
+                return ResponseEntity.ok().body(respuesta);
+ }
+*/
+   @Override
+    @Transactional
+    public ResponseEntity<RespuestaHttp> updateImageArtist(Long idArtista, String fileName, MultipartFile file) throws Exception {
+        RespuestaHttp respuesta = new RespuestaHttp();
+        try {
+            Optional<Artista> artistaOptional = artistaDao.findById(idArtista);
+            if (artistaOptional.isPresent()) {
+                Artista tatuador = artistaOptional.get();
+    //
+                Image imageBD = imageService.findByFileName(tatuador.getImageName());
+                if(imageBD != null){
+                    imageDao.delete(imageBD);
+                }
+
+                Image image = Image.buildImage(file, fileNameHelper);
+                Image savedImage = imageDao.save(image);
+
+                tatuador.setImageName(savedImage.getFileName());
+                artistaDao.save(tatuador);
+
+                respuesta.setMessage("Imagen del artista actualizada correctamente.");
+                respuesta.setStatus("OK");
+            } else {
+                throw new IllegalArgumentException("Artista no encontrado con ID: " + idArtista);
+            }
+        } catch (Exception e) {
+            respuesta.setMessage("Error al agregar imágenes del artista: " + e.getMessage());
+            respuesta.setStatus("ERROR");
+            throw new Exception("Error al agregar imágenes del artista: " + e.getMessage());
+        }
+        return ResponseEntity.ok().body(respuesta);
+    }
+
+
 }

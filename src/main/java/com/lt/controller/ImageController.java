@@ -122,6 +122,7 @@ public class ImageController {
         image.scale(width, height);
         return image;
     }
+
     public Image getImageByUuid(String uuid) throws Exception {
         Image image = imageService.findByUuid(uuid);
         if (image == null) {
@@ -129,6 +130,7 @@ public class ImageController {
         }
         return image;
     }
+
     public Image getImageByUuid(String uuid, int width, int height) throws Exception {
         Image image = imageService.findByUuid(uuid);
         if (image == null) {
@@ -155,4 +157,18 @@ public class ImageController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
+
+
+    @PostMapping("/update-image/{uuid}")
+    public ImageResponse updateImage(@PathVariable("uuid") String uuid, @RequestParam("file") MultipartFile file) {
+        Image imageBD = imageService.findByUuid(uuid);
+     //   if(imageBD == null){
+       //     return ImageResponse();
+         //   }   crear un responseEntity que devuelva una imagen de error
+        Image imageExt = Image.buildImage(file, fileHelper);
+        imageBD.setData(imageExt.getData());
+        imageService.save(imageBD);
+        return new ImageResponse(imageBD);
+    }
 }
+

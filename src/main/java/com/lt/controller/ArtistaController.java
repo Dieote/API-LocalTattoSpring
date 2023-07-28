@@ -7,6 +7,7 @@ import java.util.List;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import com.lt.service.ArtistaService;
 import org.springframework.http.ResponseEntity;
@@ -52,10 +53,17 @@ public class ArtistaController {
         return artistaService.delete(id);
     }
 
-    @PutMapping("/update-artist")
+    @PutMapping("/update-artist/")
     @ResponseBody
-    public ResponseEntity<RespuestaHttp> updateArtist(@RequestBody Artista tatuador) {
+    public ResponseEntity<RespuestaHttp> updateArtist(@RequestBody Artista tatuador) throws Exception {
         return artistaService.update(tatuador);
     }
-
+   /* @PutMapping("/update-image-artist/{artistaId}")
+    @ResponseBody
+    public ResponseEntity<RespuestaHttp> updateImageArtist(@PathVariable("artistaId") Long artistaId, @RequestParam("file") MultipartFile file) throws Exception{
+        Artista tatuador = new Artista();
+        tatuador.setId(artistaId);
+        artistaService.getArtistById(tatuador);
+        return artistaService.updateImageArtist(artistaId, tatuador.getImageName(), file);
+    } */
 }

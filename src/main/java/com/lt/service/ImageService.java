@@ -12,6 +12,7 @@ public interface ImageService {
 
     public Image save(Image image);
 
+    public Image update(Image image);
 
     public Image findByFileName(String fileName);
 
@@ -21,5 +22,7 @@ public interface ImageService {
 
     public String deleteByUuid(String uuid);
 
-    public ResponseEntity<List<String>> getArtistFileName(Artista artista);
+    public List<String> getArtistFileName(Artista artista);
+
+    public List<String> getArtistFileUuid(Artista artista);
 }
