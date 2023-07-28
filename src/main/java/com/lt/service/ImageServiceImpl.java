@@ -33,6 +33,20 @@ public class ImageServiceImpl implements ImageService{
             throw new NullPointerException("Image Data NULL");
         return imageDao.save(image);
     }
+    @Override
+    @Transactional
+    public Image update(Image image) {
+        if(image == null)
+            throw new NullPointerException("Image data Null");
+        Image existImage = imageDao.findByFileName(image.getFileName());
+        if (existImage == null){
+            throw new IllegalArgumentException("Imagen no encontrada con nombre: " + image.getFileName());
+        }
+        existImage.setFileName(image.getFileName());
+        existImage.setSize(image.getSize());
+        existImage.setFileType(image.getFileType());
+        return imageDao.save(existImage);
+    }
 
     @Override
     public Image findByFileName(String fileName) {
@@ -67,7 +81,7 @@ public class ImageServiceImpl implements ImageService{
     }
 
     @Override
-    public ResponseEntity<List<String>> getArtistFileName( Artista artista) {
+    public List<String> getArtistFileName( Artista artista ) {
         List<ImageResponse> imageResponses = imageDao.findAllImageResponse();
 
        Set<String> imgUuids = artista.getArtistImage().stream()//obtiene uuid de imagenes asos
@@ -82,7 +96,26 @@ public class ImageServiceImpl implements ImageService{
                .map(ImageResponse::getFileName)
                .collect(Collectors.toList());
 
-       return ResponseEntity.ok().body(imgNames);
+       return imgNames;
     }
+
+    public List<String> getArtistFileUuid( Artista artista ) {
+        List<ImageResponse> imageResponses = imageDao.findAllImageResponse();
+
+        Set<String> imgUuids = artista.getArtistImage().stream()//obtiene uuid de imagenes asos
+                .map(imageArtist -> imageArtist.getImage().getUuid())
+                .collect(Collectors.toSet());
+
+        List<ImageResponse> filterImage = imageResponses.stream() //filtra imagenes por uuids asos
+                .filter(imageResponse -> imgUuids.contains(imageResponse.getUuid()))
+                .collect(Collectors.toList());
+
+        List<String> imgNames = filterImage.stream()//trae id de imagenes
+                .map(ImageResponse::getUuid)
+                .collect(Collectors.toList());
+
+        return imgNames;
+    }
+
 
 }
