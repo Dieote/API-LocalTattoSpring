@@ -27,6 +27,7 @@ public class Artista implements Serializable {
     private String available;
 
     private String imageName;
+    private String imageUuid;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER,mappedBy = "artista")
     @JsonIgnore
     private Set<ImageArtist> artistImage = new HashSet<>();
